@@ -3,7 +3,7 @@ import { COLORS, SIZES } from "../../../constants/theme";
 
 const styles = StyleSheet.create({
     counter:{
-        paddingTop: 80
+        paddingTop: 40
     },
     title:{
         fontSize: SIZES.large,

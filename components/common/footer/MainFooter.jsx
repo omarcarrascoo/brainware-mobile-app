@@ -1,17 +1,27 @@
-import { Text, View } from "react-native"
-import { COLORS, SIZES } from "../../../constants/theme"
-import styles from "./MainFooter.styles"
+import React from 'react';
+import { Text, View, TouchableOpacity } from "react-native";
+import { COLORS } from "../../../constants/theme";
+import styles from "./MainFooter.styles";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useRouter } from 'expo-router';
 
+const MainFooter = () => {
+    const router = useRouter();
 
-const MainFooter = () =>{
-    return(
+    const handleNavigate = () => {
+        router.push('/createDesafio'); // Ensure the path is correct
+    };
+
+    return (
         <View style={styles.container}>
-            {/* <View style={styles.btnContainer}><Icon name="group" size={40} color={COLORS.secondary} /><Text style={styles.title}>Equipo</Text></View> */}
-            <View style={styles.btnContainer}><View style={styles.shadow}><Icon name="plus" size={40} color={COLORS.secondary} /></View><Text style={styles.title}>Desafio</Text></View>
-            {/* <View style={styles.btnContainer}><Icon name="signal" size={40} color={COLORS.secondary} /><Text style={styles.title}>Estadísticas</Text></View> */}
+            <TouchableOpacity style={styles.btnContainer} onPress={handleNavigate}>
+                <View style={styles.shadow}>
+                    <Icon name="plus" size={40} color={COLORS.secondary} />
+                </View>
+                <Text style={styles.title}>Desafio</Text>
+            </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default MainFooter
+export default MainFooter;

@@ -6,6 +6,7 @@ const COLORS = {
     gray2: "#C1C0C8",
     white: "#F3F4F8",
     lightWhite: "#FAFAFC",
+    blackText: "#121212",
   };
   
   const FONT = {

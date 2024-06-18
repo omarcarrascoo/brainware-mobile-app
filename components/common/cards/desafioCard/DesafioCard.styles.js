@@ -4,10 +4,11 @@ import { COLORS, SIZES } from "../../../../constants/theme";
 const styles = StyleSheet.create({
     container:{
        backgroundColor: COLORS.primary,
-       width: 160,
+       width: 260,
        padding: 10,
        borderRadius: 5,
-       marginRight: 5
+       marginRight: 5,
+       minHeight: 340
     },
     title:{
         fontSize: SIZES.medium,
