@@ -13,11 +13,12 @@ const styles = StyleSheet.create({
     title:{
         fontSize: SIZES.medium,
         color: COLORS.white,
-        marginTop: 5
+        marginTop: 8,
     },
     parr:{
-        fontSize:SIZES.small,
-        color: COLORS.white
+        fontSize:SIZES.medium,
+        color: COLORS.secondary,
+        marginTop: 3
     },
     count:{
         fontSize: SIZES.large * 2,
@@ -25,7 +26,18 @@ const styles = StyleSheet.create({
     },
     img:{
        width: "100%",
-       height: "50%" 
+       height: "45%" 
+    },
+    btn:{
+        backgroundColor:COLORS.secondary,
+        alignItems:'center',
+        justifyContent:'center',
+        padding: 12,
+        borderRadius:8, 
+        marginTop:20
+    },
+    btnTitle:{
+        color:COLORS.white
     }
 })
 

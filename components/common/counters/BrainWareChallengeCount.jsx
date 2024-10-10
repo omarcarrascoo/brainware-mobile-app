@@ -1,9 +1,11 @@
+
+
 // // BrainWareChallengesResume.js
 // import React from 'react';
 // import { Text, View } from 'react-native';
 // import styles from './BrainwareChallengesResume.style';
 
-// const BrainWareChallengesResume = ({ challenges }) =>{
+// const BrainWareChallengeCount = ({ challenges }) =>{
 //     // Get today's date in ISO string without time
 //     const todayDate = new Date().toISOString().slice(0, 10);
 
@@ -24,16 +26,12 @@
 
 //     return(
 //         <View style={styles.counter}>
-//             <Text style={styles.title}>COMPORTAMIENTOS DE DIA</Text>
-//             <Text style={styles.parr}>
-//                 Estos son los comportamientos diarios que has cumplido hoy de todos tus desafios. 
-//             </Text>
 //             <Text style={styles.count}>{totalCompletedRulesToday} / {totalRulesAllChallenges}</Text>
 //         </View>
 //     )
 // }
 
-// export default BrainWareChallengesResume;
+// export default BrainWareChallengeCount;
 
 
 
@@ -43,7 +41,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import styles from './BrainwareChallengesResume.style';
 
-const BrainWareChallengesResume = ({ challenges }) => {
+const BrainWareChallengeCount = ({ challenges, userId }) => {
     // Get today's date in ISO string without time
     const todayDate = new Date().toISOString().slice(0, 10);
 
@@ -68,13 +66,9 @@ const BrainWareChallengesResume = ({ challenges }) => {
 
     return (
         <View style={styles.counter}>
-            <Text style={styles.title}>COMPORTAMIENTOS DE DIA</Text>
-            <Text style={styles.parr}>
-                Estos son los comportamientos diarios que has cumplido hoy de todos tus desafíos. 
-            </Text>
             <Text style={styles.count}>{totalCompletedRulesToday} / {totalRulesAllChallenges}</Text>
         </View>
     );
 };
 
-export default BrainWareChallengesResume;
+export default BrainWareChallengeCount;

@@ -9,18 +9,67 @@ import BrainWareChallengesResume from '../components/home/BrainwareChallengesRes
 import BrainWareBitacoreList from '../components/home/Brainware_bitacor_list/BrainWareBitacoreList';
 import MainFooter from '../components/common/footer/MainFooter';
 import { Stack } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () =>{
     console.log("Hola home");
     const [challenges, setChallenges] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [token, setToken] = useState(null);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const getToken = async () => {
+            try {
+                const storedToken = await AsyncStorage.getItem('accessToken');
+                const storedUsername = await AsyncStorage.getItem('userId');
+
+                if (storedToken) {
+                    setToken(storedToken);
+                    setUser(storedUsername)
+                }
+            } catch (error) {
+                console.log('Error retrieving token:', error);
+            }
+        };
+        getToken();
+    }, []);    
+    // useEffect(() => {
+    //     const fetchChallenges = async () => {
+    //         try {
+    //             const response = await axios.get(`http://localhost:9090/api/challenges`);
+    //             const filteredChallenges = response.data.filter(challenge => challenge.userId === user);
+    //             setChallenges(filteredChallenges);
+    //             setLoading(false);
+    //         } catch (error) {
+    //             console.error('Error fetching challenges:', error);
+    //             setError('Error fetching challenges');
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchChallenges();
+    // }, [user]);
 
     useEffect(() => {
         const fetchChallenges = async () => {
             try {
-                const response = await axios.get('http://localhost:9090/api/challenges');
-                setChallenges(response.data);
+                const response = await axios.get(`http://localhost:9090/api/challenges`);
+                const filteredChallenges = response.data.filter(challenge => challenge.userId === user);
+
+                // Group challenges by title and keep the most recent one
+                const challengesMap = filteredChallenges.reduce((acc, challenge) => {
+                    const existingChallenge = acc[challenge.title];
+                    if (!existingChallenge || new Date(challenge.startDate) > new Date(existingChallenge.startDate)) {
+                        acc[challenge.title] = challenge;
+                    }
+                    return acc;
+                }, {});
+
+                const mostRecentChallenges = Object.values(challengesMap);
+
+                setChallenges(mostRecentChallenges);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching challenges:', error);
@@ -30,9 +79,11 @@ const Home = () =>{
         };
 
         fetchChallenges();
-    }, []);
+    }, [user]);
+    
 
-
+    
+    
 
     if (loading) {
         return (
@@ -49,7 +100,7 @@ const Home = () =>{
                         <View style={{minHeight:100, margin:0, paddingTop:70, alignItems:'center',  backgroundColor:COLORS.lightWhite}}>
                             <View style={{justifyContent:'space-between', flexDirection: "row", width:"92%"}}>
                                 <ScreenHeaderLogo imageUrl={images.logoBrainWare} dimension='100%' />
-                                <ScreenHeaderProfile imageUrl={"http://localhost:9090/public/images/pp.png"} dimension = '100%'/>
+                                <ScreenHeaderProfile imageUrl={"https://static.vecteezy.com/system/resources/thumbnails/005/129/844/small_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"} dimension = '100%'/>
                             </View>
                         </View>
                     )
@@ -75,7 +126,7 @@ const Home = () =>{
                         <View style={{minHeight:100, margin:0, paddingTop:70, alignItems:'center',  backgroundColor:COLORS.lightWhite}}>
                             <View style={{justifyContent:'space-between', flexDirection: "row", width:"92%"}}>
                                 <ScreenHeaderLogo imageUrl={images.logoBrainWare} dimension='100%' />
-                                <ScreenHeaderProfile imageUrl={"http://localhost:9090/public/images/pp.png"} dimension = '100%'/>
+                                <ScreenHeaderProfile imageUrl={"https://static.vecteezy.com/system/resources/thumbnails/005/129/844/small_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"} dimension = '100%'/>
                             </View>
                         </View>
                     )
@@ -100,7 +151,7 @@ const Home = () =>{
                         <View style={{minHeight:100, margin:0, paddingTop:70, alignItems:'center',  backgroundColor:COLORS.lightWhite}}>
                             <View style={{justifyContent:'space-between', flexDirection: "row", width:"92%"}}>
                                 <ScreenHeaderLogo imageUrl={images.logoBrainWare} dimension='100%' />
-                                <ScreenHeaderProfile imageUrl={"http://localhost:9090/public/images/pp.png"} dimension = '100%'/>
+                                <ScreenHeaderProfile imageUrl={"https://static.vecteezy.com/system/resources/thumbnails/005/129/844/small_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"} dimension = '100%'/>
                             </View>
                         </View>
                     )

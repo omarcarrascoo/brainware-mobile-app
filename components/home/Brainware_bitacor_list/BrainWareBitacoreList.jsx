@@ -15,6 +15,7 @@ const BrainWareBitacoreList = ({ challenges }) => {
                 {challenges.map(challenge => (
                     
                         <DesafioCard
+                        ciclo={challenge.ciclo}
                         allChallenge ={challenge}
                         key={challenge._id}
                         id={challenge._id}
@@ -22,6 +23,7 @@ const BrainWareBitacoreList = ({ challenges }) => {
                         description={challenge.description}
                         progress={`${getCompletedRulesCount(challenge)}/${challenge.rules.length}`}
                         imageUrl={challenge.image}
+
                         />
                 ))}
             </ScrollView>

@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
         padding:SIZES.medium,
         paddingHorizontal:SIZES.medium * 2,
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        gap:38
     },
    btnContainer:{
 

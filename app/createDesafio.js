@@ -1,4 +1,4 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
 import { COLORS, SIZES } from '../constants/theme';
@@ -10,6 +10,7 @@ import BrainWareCreateDesafio from '../components/createDesafio/CreateDesafio';
 import BrainWareCompSection from '../components/createDesafio/CompoSection';
 import BrainWarePointSection from '../components/createDesafio/PointsSection';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateChallenge = () => {
     const router = useRouter()
@@ -17,6 +18,44 @@ const CreateChallenge = () => {
     const [title, setTitle] = useState("");
     const [endDate, setEndDate] = useState(new Date());
     const [behaviors, setBehaviors] = useState([]);
+    const [token, setToken] = useState(null);
+    const [user, setUser] = useState(null);
+
+    const localParams = useLocalSearchParams();
+    const {idCycle, challengeData, challengeTitle, ciclo} = localParams
+    console.log(challengeData);
+    
+    console.log(idCycle);
+    
+    useEffect(() => {
+        const getToken = async () => {
+            try {
+                const storedToken = await AsyncStorage.getItem('accessToken');
+                const storedUsername = await AsyncStorage.getItem('userId');
+
+                if (storedToken) {
+                    setToken(storedToken);
+                    setUser(storedUsername)
+                }
+            } catch (error) {
+                console.log('Error retrieving token:', error);
+            }
+        };
+        getToken();
+    }, []);
+    console.log("ciclo");
+    console.log(ciclo);
+    console.log("ciclo sumado");
+    console.log(ciclo);
+    
+    console.log(parseInt(ciclo, 10));
+    
+    let newCiclo = parseInt(ciclo, 10) + 1
+    console.log("ciclo2");
+    console.log(newCiclo);
+    
+
+    
     const handleContinue = () => {
         if (step < 3) {
             setStep(step + 1);
@@ -30,10 +69,13 @@ const CreateChallenge = () => {
                 );
             } else {
                 if (step >= 3) {
+                    
                     const data = {
                         title: title,
                         endDate: endDate.toISOString(),
-                        rules: behaviors.map(behavior => ({ description: behavior.name, points: parseFloat(behavior.points) }))
+                        rules: behaviors.map(behavior => ({ description: behavior.name, points: parseFloat(behavior.points) })),
+                        userId: user,
+                        ciclo: newCiclo
                     };
                     axios.post('http://localhost:9090/api/challenges/create', data)
                         .then(response => {
@@ -43,7 +85,7 @@ const CreateChallenge = () => {
                                 'Su desafio ha sido creado, empiece a trabajar en él',
                                 [{ text: 'OK', onPress: () => {
                                     console.log('Challenge Saved!');
-                                    router.push('/home'); // Navigate to HomeScreen
+                                    router.push('/home');
                                 }}]
                             );
                         })
@@ -78,12 +120,12 @@ const CreateChallenge = () => {
         updatedBehaviors[index].points = value;
         setBehaviors(updatedBehaviors);
     };
-    console.log(endDate);
+    console.log(ciclo);
 
 
     useEffect(()=>{
         if(step == 0){
-            router.push("/home")
+            router.back("/home")
         }
     }, [step])
     const handleBack = () => {
@@ -116,6 +158,8 @@ const CreateChallenge = () => {
                         setedTitle={title}
                         setedDate={endDate}
                         onDateChange={handleDateChange}
+                        cycle={challengeTitle}
+                        
                     />
                 )}
                 {step === 2 && (
