@@ -68,25 +68,42 @@ const CreateChallenge = () => {
                     [{ text: 'OK', onPress: () => {} }]
                 );
             } else {
-                if (step >= 3) {
-                    
-                    const data = {
-                        title: title,
-                        endDate: endDate.toISOString(),
-                        rules: behaviors.map(behavior => ({ description: behavior.name, points: parseFloat(behavior.points) })),
-                        userId: user,
-                        ciclo: newCiclo
-                    };
+                const data = {
+                    title: title,
+                    endDate: endDate.toISOString(),
+                    rules: behaviors.map(behavior => ({ description: behavior.name, points: parseFloat(behavior.points) })),
+                    userId: user,
+                    ciclo:  newCiclo
+                };
+
+                if (idCycle) {
+                    // Update existing challenge
+                    axios.put(`http://localhost:9090/api/challenges/${idCycle}`, data)
+                        .then(response => {
+                            console.log(response.data);
+                            Alert.alert(
+                                'Desafio Actualizado',
+                                'El desafío ha sido actualizado exitosamente.',
+                                [{ text: 'OK', onPress: () => router.push('/home') }]
+                            );
+                        })
+                        .catch(error => {
+                            console.error('Error updating challenge:', error);
+                            Alert.alert(
+                                'Error',
+                                'Hubo un problema al actualizar el desafío. Por favor, inténtelo de nuevo más tarde.',
+                                [{ text: 'OK', onPress: () => {} }]
+                            );
+                        });
+                } else {
+                    // Create new challenge
                     axios.post('http://localhost:9090/api/challenges/create', data)
                         .then(response => {
                             console.log(response.data);
                             Alert.alert(
                                 'Desafio Creado',
-                                'Su desafio ha sido creado, empiece a trabajar en él',
-                                [{ text: 'OK', onPress: () => {
-                                    console.log('Challenge Saved!');
-                                    router.push('/home');
-                                }}]
+                                'Su desafío ha sido creado, empiece a trabajar en él.',
+                                [{ text: 'OK', onPress: () => router.push('/home') }]
                             );
                         })
                         .catch(error => {
@@ -94,7 +111,7 @@ const CreateChallenge = () => {
                             Alert.alert(
                                 'Error',
                                 'Hubo un problema al crear el desafío. Por favor, inténtelo de nuevo más tarde.',
-                                [{ text: 'OK', onPress: () => console.log('Error creating challenge') }]
+                                [{ text: 'OK', onPress: () => {} }]
                             );
                         });
                 }

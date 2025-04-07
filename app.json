@@ -9,6 +9,23 @@
       "expo-font"
     ],
     "name": "brainware",
-    "slug": "brainware"
+    "slug": "testbrainware",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ba2eb5be-ff7e-4580-8abb-b319803206e1"
+      }
+    },
+    "owner": "ocarrasco02",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ba2eb5be-ff7e-4580-8abb-b319803206e1"
+    },
+    "android": {},
+    "ios": {}
   }
 }

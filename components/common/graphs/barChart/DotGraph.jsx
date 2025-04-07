@@ -1,16 +1,20 @@
 import React from 'react';
 import { View, Text, Dimensions, ScrollView } from 'react-native';
-import { BarChart } from 'react-native-chart-kit';
+import { LineChart } from 'react-native-chart-kit'; // Changed to LineChart
 import { COLORS, SIZES } from '../../../../constants/theme';
 
-const VerticalBarChart = ({ dataAssets }) => {
+const DotGraph = ({ dataAssets }) => {
   const screenWidth = Dimensions.get('window').width;
 
-  // Default data if none is provided
-  const data = dataAssets || {
-    labels: ['Ejemplo 1', 'Etiqueta Larga Ejemplo', 'Ejemplo 3'],
-    datasets: [{ data: [20, 45, 28] }],
-  };
+  // Ensure dataAssets is valid and has the required structure
+  const data = dataAssets && dataAssets.labels && dataAssets.datasets
+    ? dataAssets
+    : {
+        labels: ['No Data'], // Fallback label
+        datasets: [{ data: [0] }], // Fallback dataset
+      };
+
+  console.log("DotGraph data:", data); // Log the data for debugging
 
   const chartConfig = {
     backgroundColor: COLORS.lightWhite,
@@ -20,7 +24,7 @@ const VerticalBarChart = ({ dataAssets }) => {
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: { borderRadius: 50 },
-    propsForDots: { r: '6', strokeWidth: '0', stroke: '#c6bdb0' },
+    propsForDots: { r: '6', strokeWidth: '2', stroke: COLORS.primary }, // Adjusted for dot graph
   };
 
   // Create numeric labels for the chart (e.g., "1", "2", "3", ...)
@@ -36,14 +40,14 @@ const VerticalBarChart = ({ dataAssets }) => {
           marginBottom: SIZES.large * 2,
         }}
       >
-        PROMEDIO DE DESEMPEÑO POR COMPORTAMIENTO
+        PROMEDIO DE DESEMPEÑO POR CICLO
       </Text>
       <View style={{ transform: [{ rotate: '0deg' }] }}>
-        <BarChart
+        <LineChart
           style={{
             marginVertical: 8,
             borderRadius: 5,
-            margin: 0, 
+            margin: 0,
           }}
           data={{ labels: numericLabels, datasets: data.datasets }}
           width={screenWidth - 30}
@@ -51,23 +55,13 @@ const VerticalBarChart = ({ dataAssets }) => {
           yAxisLabel="%"
           chartConfig={chartConfig}
           fromZero
-          // verticalLabelRotation={0}
-          // horizontalLabelRotation={-90}
-          showValuesOnTopOfBars
+          bezier // Makes the line smooth
+          withDots // Ensures dots are displayed
         />
       </View>
       
-      {/* Index of questions */}
-      <View style={{ marginTop: 20, paddingHorizontal: 10 }}>
-      <Text style={{fontWeight: 500, marginBottom: 10}} >Indice del circulo virtuoso:</Text>
-        {data.labels.map((label, index) => (
-          <Text key={index} style={{ color: COLORS.DarkBlue, fontSize: 14, marginVertical: 5 }}>
-            {`${index + 1}. ${label}`}
-          </Text>
-        ))}
-      </View>
     </ScrollView>
   );
 };
 
-export default VerticalBarChart;
+export default DotGraph;

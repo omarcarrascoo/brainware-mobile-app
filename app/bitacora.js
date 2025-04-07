@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { COLORS, SIZES } from '../constants/theme';
 import ScreenHeaderBtn from '../components/common/header/ScreenHeaderBtn';
 import icons from '../constants/icons';
@@ -17,8 +17,20 @@ const Bitacora = () => {
     const [challenge, setChallenge] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentDate, setCurrentDate] = useState(new Date().toISOString().slice(0, 10)); // Today's date
+    const [currentDate, setCurrentDate] = useState(() => {
+        return new Date().toISOString().slice(0, 10);
+    });
     const [behaviors, setBehaviors] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [selectedValue, setSelectedValue] = useState(null);
+
+    const statusOptions = [
+        { label: 'NA', value: 'NA' },
+        { label: 'HECHO', value: 'HECHO' },
+        { label: 'FALLO', value: 'FALLO' }
+    ];
+
     useEffect(() => {
         const fetchChallenge = async () => {
             try {
@@ -38,62 +50,84 @@ const Bitacora = () => {
         if (challenge.rules) {
             const progressForDate = challenge.progress?.find(progress => progress.date.slice(0, 10) === currentDate);
             const behaviorsWithStatus = challenge.rules.map(rule => {
-                const completedRule = progressForDate?.completedRules.find(cr => cr.rule._id === rule._id);         
+                const completedRule = progressForDate?.completedRules.find(cr => cr.rule._id === rule._id);
                 return {
                     ...rule,
-                    //status: completedRule?.status? (completedRule.status != "NA" ? (completedRule.status === 'HECHO' ? 'HECHO' : 'FALLO') : 'NA'):'FALLO'
-                    status: completedRule?.status? completedRule?.status : "FALLO"
+                    status: completedRule?.status ? completedRule.status : "FALLO"
                 };
             });
             setBehaviors(behaviorsWithStatus);
         }
     }, [challenge, currentDate]);
 
-    const handleStatusChange = (index) => {
-        // if (currentDate !== new Date().toISOString().slice(0, 10)) return; 
+    const handleStatusChange = async (index, id, newValue) => {
+        // if (currentDate !== new Date().toISOString().slice(0, 10)) return;
 
         const updatedBehaviors = [...behaviors];
-        const currentStatus = updatedBehaviors[index].status;
-        console.log("Current Status 1");
-        console.log(currentStatus);
-        if (currentStatus === "NA") {
-            updatedBehaviors[index].status = "FALLO";
-        } else if (currentStatus === "HECHO") {
-            updatedBehaviors[index].status = "NA";
-        } else if (currentStatus === "FALLO") {
-            updatedBehaviors[index].status = "HECHO";
-        }
-        console.log("Current Status 2");
-        console.log(currentStatus);
+        updatedBehaviors[index].status = newValue;
         setBehaviors(updatedBehaviors);
-        console.log(updatedBehaviors);
-        
-        // Update the backend
-       // const updatedRules = updatedBehaviors.filter(behavior => behavior.status === "HECHO").map(behavior => behavior._id);
-        const updatedRules = updatedBehaviors.filter(behavior => behavior.status === "HECHO");
 
-        axios.post(`http://localhost:9090/api/challenges/${localParams.id}/progress`, {
+        await axios.post(`http://localhost:9090/api/challenges/${localParams.id}/progress`, {
             date: currentDate,
             completedRules: updatedBehaviors,
-            status: currentStatus
+            status: newValue
         }).then(response => {
             console.log('Progress updated successfully:', response.data);
         }).catch(error => {
             console.error('Error updating progress:', error);
         });
+
+        if (newValue !== "NA") {
+            router.push({ pathname: `/preguntas`, params: { id: id, ruleStatus: newValue, challengeData: challenge, challengeTitle: challenge.title, ciclo: challenge.ciclo } });
+        }
     };
 
     const handleNavigate = () => {
-        router.push('/home');
+        router.back('/home');
     };
 
     const handleDateChange = (direction) => {
-        const newDate = new Date(currentDate);
+        const [year, month, day] = currentDate.split('-').map(Number);
+        const newDate = new Date(year, month - 1, day);
+
         newDate.setDate(newDate.getDate() + direction);
+
         const today = new Date().toISOString().slice(0, 10);
         const newDateString = newDate.toISOString().slice(0, 10);
-        // if (newDateString > today) return;
+
+        if (!challenge.startDate || !challenge.endDate) {
+            console.error('Start date or end date is not defined');
+            return;
+        }
+
+        const startDateString = new Date(challenge.startDate).toISOString().slice(0, 10);
+        const endDateString = new Date(challenge.endDate).toISOString().slice(0, 10);
+
+        if (newDateString > today) return;
+        if (newDateString > endDateString) return;
+        if (newDateString < startDateString) return;
+
         setCurrentDate(newDateString);
+    };
+
+    const isPrevDisabled = !challenge.startDate || currentDate <= new Date(challenge.startDate).toISOString().slice(0, 10);
+    const isNextDisabled = !challenge.endDate || currentDate >= new Date(challenge.endDate).toISOString().slice(0, 10) || currentDate >= new Date().toISOString().slice(0, 10);
+
+    const openModal = (index, value) => {
+        setSelectedIndex(index);
+        setSelectedValue(value);
+        setModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+
+    const selectStatus = (value) => {
+        if (selectedIndex !== null) {
+            handleStatusChange(selectedIndex, behaviors[selectedIndex]._id, value);
+        }
+        closeModal();
     };
 
     if (loading) {
@@ -101,8 +135,8 @@ const Bitacora = () => {
             <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Stack.Screen
                     options={{
-                        header: () =>(
-                            <MainHeader/>
+                        header: () => (
+                            <MainHeader />
                         )
                     }}
                 />
@@ -120,6 +154,9 @@ const Bitacora = () => {
         );
     }
 
+    const startDate = new Date(challenge.startDate).toISOString().split('T')[0];
+    const endDate = new Date(challenge.endDate).toISOString().split('T')[0];
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
             <Stack.Screen
@@ -135,33 +172,35 @@ const Bitacora = () => {
                 }}
             />
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View
-                    style={{
-                        flex: 1,
-                        paddingTop: 50,
-                        padding: SIZES.medium
-                    }}
-                >
+                <View style={{ flex: 1, paddingTop: 50, padding: SIZES.medium }}>
                     <View style={styles.container}>
                         <Text style={styles.subTitle}>DESAFIO</Text>
                         <Text style={styles.parr}>{challenge.title}</Text>
                     </View>
                     <View style={styles.container}>
                         <Text style={styles.subTitle}>FECHA DE DESAFIO</Text>
-                        <Text style={styles.parr}>Inicio: {challenge.startDate}</Text>
-                        <Text style={styles.parr}>Final: {challenge.endDate}</Text>
+                        <Text style={styles.parr}>Inicio: {startDate}</Text>
+                        <Text style={styles.parr}>Final: {endDate}</Text>
                     </View>
                     <View style={styles.container2}>
                         <Text style={styles.subTitle}>BITACORA DIA </Text>
                         <Text style={styles.done}>{behaviors.filter(b => b.status === 'HECHO').length}/{challenge.rules.length}</Text>
                     </View>
                     <View style={styles.container2}>
-                        <TouchableOpacity onPress={() => handleDateChange(-1)}>
-                            <Icon name="chevron-left" size={40} color={COLORS.secondary} />
+                        <TouchableOpacity onPress={() => handleDateChange(-1)} disabled={isPrevDisabled}>
+                            <Icon name="chevron-left" size={40} color={isPrevDisabled ? COLORS.gray : COLORS.secondary} />
                         </TouchableOpacity>
-                        <Text style={styles.subTitle2}> {currentDate} </Text>
-                        <TouchableOpacity onPress={() => handleDateChange(1)}>
-                            <Icon name="chevron-right" size={40} color={COLORS.secondary} />
+                        <Text style={styles.parrBig}>
+                            {new Date(currentDate).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: '2-digit',
+                                year: 'numeric',
+                                timeZone: 'UTC'
+                            })}
+                        </Text>
+                        <TouchableOpacity onPress={() => handleDateChange(1)} disabled={isNextDisabled}>
+                            <Icon name="chevron-right" size={40} color={isNextDisabled ? COLORS.gray : COLORS.secondary} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.containerR}>
@@ -172,9 +211,9 @@ const Bitacora = () => {
                     <View>
                         {behaviors.map((behavior, index) => (
                             <View style={styles.containerR} key={index}>
-                                <View style={{ flexDirection: "row", alignItems: 'center', width: "33.3%" }}>
+                                <View style={{ flexDirection: "row", alignItems: 'center', width: "33.3%", height: 120 }}>
                                     <Text style={styles.parr}>{index + 1}. </Text>
-                                    <Text style={styles.parr}>{behavior.description}</Text>
+                                    <Text style={{ maxWidth: "100%", ...styles.parr }}>{behavior.description}</Text>
                                 </View>
                                 <View style={{ flexDirection: "row", alignItems: 'center', width: "33.3%", justifyContent: "center" }}>
                                     <Text style={styles.parr}>{behavior.points} %</Text>
@@ -183,11 +222,10 @@ const Bitacora = () => {
                                     <TouchableOpacity
                                         style={{
                                             backgroundColor: behavior.status === 'NA' ? '#2B3859' : behavior.status === 'HECHO' ? '#8CBB38' : '#BB3838',
-                                            padding: 8,
-                                            borderRadius: 5
+                                            borderRadius: 10,
+                                            padding: 10,
                                         }}
-                                        onPress={() => handleStatusChange(index)}
-                                        // disabled={currentDate !== new Date().toISOString().slice(0, 10)}
+                                        onPress={() => openModal(index, behavior.status)}
                                     >
                                         <Text style={{ color: COLORS.white }}>{behavior.status}</Text>
                                     </TouchableOpacity>
@@ -197,94 +235,107 @@ const Bitacora = () => {
                     </View>
                 </View>
             </ScrollView>
+
+            {/* Modal for Status Selection */}
+            <Modal
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={closeModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        {statusOptions.map((option, index) => (
+                            <Pressable
+                                key={index}
+                                style={styles.modalOption}
+                                onPress={() => selectStatus(option.value)}
+                            >
+                                <Text style={styles.modalOptionText}>{option.label}</Text>
+                            </Pressable>
+                        ))}
+                        <Pressable style={styles.modalCloseButton} onPress={closeModal}>
+                            <Text style={styles.modalCloseButtonText}>Cerrar</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 };
 
-
-
-
-
-
 const styles = StyleSheet.create({
-    subTitle:{
-      color: COLORS.primary,
-      fontSize: 22,
-      marginBottom:5
-    },
-
-    subTitle2:{
-        color: COLORS.gray,
+    subTitle: {
+        color: COLORS.primary,
         fontSize: 22,
-        marginBottom:5
-      },
-    done:{
+        marginBottom: 5
+    },
+    done: {
         color: COLORS.secondary,
         fontSize: 22,
-        marginBottom:5
+        marginBottom: 5
     },
-    containerDate:{
-      width: "100%",
-      backgroundColor: COLORS.primary,
-      minHeight: 28,
-      alignItems:"center",
-      justifyContent:"space-between",
-      flexDirection: "row",
-      padding: 8,
-      borderRadius: 5
+    parr: {
+        color: COLORS.gray,
+        fontSize: 14,
+        marginBottom: 5
     },
-    textArea: {
-      height: 120,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      padding: 10,
-      marginBottom: 20,
-      textAlignVertical: 'top',
-      borderRadius: 5,
-      color:COLORS.primary
-      
+    parrBig: {
+        color: COLORS.gray,
+        fontSize: 18,
+        marginBottom: 5
     },
-    logImage:{
-      maxWidth:"100%",
-      height:180
-    },
-    title:{
-      color: COLORS.primary,
-      fontSize: 32,
-      textAlign:"center"
-    },
-    parrcenter:{
-      textAlign:"center",
-      color: COLORS.primary,
-      fontSize: 14,
-      marginBottom: 35
-    },
-    parr:{
-      color: COLORS.gray,
-      fontSize: 14,
-      marginBottom:5
-    },
-    parrT:{
+    parrT: {
         color: COLORS.gray,
         fontSize: 14,
         width: "33.3%",
-        textAlign:"center"
+        textAlign: "center"
     },
-    container:{
-      marginBottom:20
+    container: {
+        marginBottom: 20
     },
-    container2:{
-        marginBottom:20,
-        flexDirection:  "row",
+    container2: {
+        marginBottom: 20,
+        flexDirection: "row",
         alignItems: "center"
     },
-    containerR:{
-        marginBottom:20,
-        flexDirection:  "row",
+    containerR: {
+        marginBottom: 20,
+        flexDirection: "row",
         alignItems: "center",
-        borderTopWidth:.2,
-        borderBottomWidth:.2,
-        height:38
-    }
-  });
+        borderTopWidth: 0.2,
+        borderBottomWidth: 0.2,
+        minHeight: 40,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: COLORS.lightWhite,
+        borderRadius: 10,
+        padding: 20,
+    },
+    modalOption: {
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.gray,
+    },
+    modalOptionText: {
+        fontSize: 18,
+        color: COLORS.primary,
+    },
+    modalCloseButton: {
+        marginTop: 10,
+        padding: 15,
+        alignItems: 'center',
+    },
+    modalCloseButtonText: {
+        fontSize: 18,
+        color: COLORS.secondary,
+    },
+});
+
 export default Bitacora;

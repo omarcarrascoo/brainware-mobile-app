@@ -14,7 +14,9 @@ const DesafioCard = ({ allChallenge, title, description, progress, imageUrl, id,
     };
     
     const handleUpdate = () => {
-        router.push({ pathname: `/preguntas`, params: { id: id, challengeData: allChallenge, challengeTitle: title, ciclo: ciclo } });
+        router.push({pathname:`/createDesafio`, params: { idCycle: id, challengeData: allChallenge, challengeTitle: title, ciclo: ciclo }});
+
+        // router.push({ pathname: `/preguntas`, params: { id: id, challengeData: allChallenge, challengeTitle: title, ciclo: ciclo } });
     };
 
     useEffect(() => {
@@ -34,19 +36,19 @@ const DesafioCard = ({ allChallenge, title, description, progress, imageUrl, id,
     const isChallengeEnded = endDateTimestamp <= today;
 
     return (
-        <TouchableOpacity onPress={isChallengeEnded ? handleUpdate : handlePress}>
+        <TouchableOpacity onPress={isChallengeEnded ? handlePress : handlePress}>
             <View style={styles.container}>
                 <Image style={styles.img} source={{ uri: imageUrl }} />
                 <Text style={styles.title}>Desafio:</Text>
                 <Text style={styles.parr}>{title}</Text>
                 {isChallengeEnded?(<View/>):(<><Text style={styles.title}>Comportamientos:</Text>
                     <Text style={styles.parr}>{progress}</Text>
-                    <Text style={styles.title}>Ciclo:</Text>
-                <Text style={styles.parr}>{progressCycle}%</Text>
+                    {/* <Text style={styles.title}>Ciclo:</Text>
+                <Text style={styles.parr}>{progressCycle}%</Text> */}
                     </>)}
                 
                 {isChallengeEnded && (
-                    <TouchableOpacity onPress={handleUpdate} style={styles.btn}><Text style={styles.btnTitle}>Evaluar</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={handleUpdate} style={styles.btn}><Text style={styles.btnTitle}>Crear Ciclo</Text></TouchableOpacity>
                 )}
             </View>
         </TouchableOpacity>

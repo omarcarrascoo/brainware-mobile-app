@@ -12,6 +12,11 @@ const BrainWareCreateDesafio = ({ onTitleChange, onDateChange, setedDate, setedT
         onTitleChange(newText);
     };
 
+    const today = new Date();
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 20);
+    console.log(today);
+    
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios');
@@ -40,14 +45,20 @@ const BrainWareCreateDesafio = ({ onTitleChange, onDateChange, setedDate, setedT
     
                 <View style={styles.container}>
                     <Text style={styles.subTitle}>Fecha de finalizacion</Text>
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display="spinner"
-                        onChange={onChange}
-                        textColor="#fff"
-                        
-                    />
+                    {Platform.OS === 'android' && (
+                        <Button onPress={showDatepicker} title="Seleccionar fecha" />
+                    )}
+                    {(show || Platform.OS === 'ios') && (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="spinner"
+                            onChange={onChange}
+                            textColor="#fff"
+                            minimumDate={today}
+                            maximumDate={maxDate}
+                        />
+                    )}
                 </View>
                 <View style={styles.container}>
                     <Text style={styles.subTitle}>Imagen</Text>
@@ -84,14 +95,21 @@ const BrainWareCreateDesafio = ({ onTitleChange, onDateChange, setedDate, setedT
     
                 <View style={styles.container}>
                     <Text style={styles.subTitle}>Fecha de finalizacion</Text>
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display="spinner"
-                        onChange={onChange}
-                        textColor="#fff"
-                        
-                    />
+                    <Text style={styles.parr}>No puede ser mayor a 20 dias </Text>
+                    {Platform.OS === 'android' && (
+                        <Button onPress={showDatepicker} title="Seleccionar fecha" />
+                    )}
+                    {(show || Platform.OS === 'ios') && (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="spinner"
+                            onChange={onChange}
+                            textColor="#fff"
+                            minimumDate={today}
+                            maximumDate={maxDate}
+                        />
+                    )}
                 </View>
                 <View style={styles.container}>
                     <Text style={styles.subTitle}>Imagen</Text>
@@ -107,8 +125,6 @@ const BrainWareCreateDesafio = ({ onTitleChange, onDateChange, setedDate, setedT
             </View>
         );
     }
-    
-    
 }
 
 const styles = StyleSheet.create({

@@ -282,6 +282,8 @@ const Login = () => {
     const [quote, setQuote] = useState(getRandomQuote());
     const router = useRouter();
 
+    const today = new Date().toLocaleDateString('en-US'); // Dynamically get today's date
+
     useEffect(() => {
         setQuote(getRandomQuote());
     }, []);
@@ -335,7 +337,7 @@ const Login = () => {
             />
             <View style={{ alignItems: 'center', backgroundColor: COLORS.lightWhite, justifyContent: 'space-between' }}>
                 <View style={{ display: 'flex', alignItems: "center", width: "80%" }}>
-                    <Text style={{ fontSize: 40, color: COLORS.primary, fontWeight: 600 }}>12-30-2024</Text>
+                    <Text style={{ fontSize: 40, color: COLORS.primary, fontWeight: 600 }}>{today}</Text>
                     <Text style={{ fontSize: 18, fontWeight: 300, textAlign: 'center', color: COLORS.primary, marginTop: 10 }}>"{quote.quote}" -{quote.author}</Text>
                 </View>
                 <View style={{ paddingTop: 40, paddingBottom: 90, marginTop: 40, borderTopLeftRadius: 40, borderTopEndRadius: 40, alignItems: "center", width: "100%", backgroundColor: COLORS.primary }}>

@@ -14,38 +14,42 @@ import MainHeader from '../components/common/header/MainHeader';
 const Preguntas = () => {
     const router = useRouter();
     const localParams = useLocalSearchParams();
-    const [challenge, setChallenge] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [currentDate, setCurrentDate] = useState(new Date().toISOString().slice(0, 10)); // Today's date
-    const [behaviors, setBehaviors] = useState([]);
+
 
 
 
     const [text, setText] = useState('');
     const [text2, setText2] = useState('');
     const [text3, setText3] = useState('');
+    const [text4, setText4] = useState('');
 
     const handleNavigate = () =>{
         router.push('/home')
     }
 
     const hanndleCycle = (cycle) => {
-        router.push({pathname:`/createDesafio`, params: { idCycle:localParams.id, challengeData: localParams.challengeData, challengeTitle: localParams.challengeTitle, ciclo: localParams.ciclo }});
+        router.back()
+        // router.push({ pathname: `/preguntas`, params: { id: localParams.id, challengeData: allChallenge, challengeTitle: title, ciclo: ciclo } });
+
+        // router.push({pathname:`/createDesafio`, params: { idCycle:localParams.id, challengeData: localParams.challengeData, challengeTitle: localParams.challengeTitle, ciclo: localParams.ciclo }});
     };
     const handleSendData = async () => {
         try {
             const response = await axios.post('http://localhost:9090/api/questions', {
-                challengeId: localParams.id,
+                ruleId: localParams.id,
                 q1: text,
                 q2: text2,
-                q3: text3
+                q3: text3,
+                q4: text4,
+                status: localParams.ruleStatus
             });
             console.log(response);
             Alert.alert("Data sent successfully");
             hanndleCycle()
 
         } catch (error) {
+            console.log(error);
+            
             Alert.alert("An error occurred", error.message);
         }
     };
@@ -57,7 +61,7 @@ const Preguntas = () => {
                     header: () => (
                         <View style={{ minHeight: 100, margin: 0, paddingTop: 70, alignItems: 'center', backgroundColor: COLORS.lightWhite }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: "row", width: "90%" }}>
-                                <ScreenHeaderBtn handlePress={() => handleNavigate()} iconUrl={icons.close} dimension='100%' />
+                                {/* <ScreenHeaderBtn handlePress={() => handleNavigate()} iconUrl={icons.close} dimension='100%' /> */}
                                 <ScreenHeaderProfile imageUrl={"https://static.vecteezy.com/system/resources/thumbnails/005/129/844/small_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"} dimension='100%' />
                             </View>
                         </View>
@@ -72,9 +76,10 @@ const Preguntas = () => {
                         padding: SIZES.medium
                     }}
                 >
-                    <Text style={styles.subTitle}>PREGUNTAS FINALES</Text>
+                    <Text style={styles.subTitle}>BITACORA DIARIA</Text>
+                    <Text style={{fontWeight: 600, marginVertical: 10, color: COLORS.gray,}} >Añade o complementa los registros en tu bitacora del dia y evalua tu rendimiento.</Text>
                     <View style={styles.container}>
-                        <Text style={styles.parr}>¿Cuáles son los resultados específicos que obtuviste durante el proceso de coaching que consideras importante mantener a lo largo del tiempo?</Text>
+                        <Text style={styles.parr}>DESCRIPCION DE LOS HECHOS DE LA SITUACIÓN</Text>
                         <TextInput
                         style={styles.textArea}
                         placeholder="Escribe acerca de tu desafio... "
@@ -84,7 +89,7 @@ const Preguntas = () => {
                         />
                     </View>
                     <View style={styles.container}>
-                        <Text style={styles.parr}>¿Cuáles consideras que son las acciones clave que te permitirán mantener estos resultados?</Text>
+                        <Text style={styles.parr}>HISTORIAS QUE TE CONTASTE (PERCEPCION)</Text>
                         <TextInput
                         style={styles.textArea}
                         placeholder="Escribe acerca de tu desafio... "
@@ -92,9 +97,8 @@ const Preguntas = () => {
                         onChangeText={setText2}
                         multiline={true}
                         />
-                    </View>
-                    <View style={styles.container}>
-                        <Text style={styles.parr}>¿Qué actividades a corto (1 mes) mediano (3 meses) y largo (6 meses) plazo crees que puedas implementar para que contribuyan a mantener y consolidar lo logrado.</Text>
+                    </View>                    <View style={styles.container}>
+                        <Text style={styles.parr}>EMOCION PRIMARIA SENTIDA</Text>
                         <TextInput
                         style={styles.textArea}
                         placeholder="Escribe acerca de tu desafio... "
@@ -103,6 +107,17 @@ const Preguntas = () => {
                         multiline={true}
                         />
                     </View>
+                    <View style={styles.container}>
+                        <Text style={styles.parr}>CREENCIAS QUE EMERGIERON EN EL EVENTO QUE TE LIMITÓ EL USO DEL METODO</Text>
+                        <TextInput
+                        style={styles.textArea}
+                        placeholder="Escribe acerca de tu desafio... "
+                        value={text4}
+                        onChangeText={setText4}
+                        multiline={true}
+                        />
+                    </View>
+                    
                     <TouchableOpacity onPress={handleSendData} style={styles.btn}>
                         <Text style={styles.textBtn}>Enviar</Text>
                     </TouchableOpacity>

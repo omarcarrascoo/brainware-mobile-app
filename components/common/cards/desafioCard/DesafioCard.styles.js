@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
        padding: 10,
        borderRadius: 5,
        marginRight: 5,
-       minHeight: 340
+       minHeight: 300
     },
     title:{
         fontSize: SIZES.medium,
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
     img:{
        width: "100%",
-       height: "45%" 
+       height: "30%" 
     },
     btn:{
         backgroundColor:COLORS.secondary,

@@ -14,7 +14,6 @@ const BrainWarePointSection = ({ behaviors, onPercentageChange, onContinue }) =>
         return total;
     };
 
-    console.log("hola points");
     return (
         <View style={styles.containerDesafio}>
             <Text style={styles.title}>PONDERACIÓN</Text>
@@ -30,7 +29,7 @@ const BrainWarePointSection = ({ behaviors, onPercentageChange, onContinue }) =>
                 <ScrollView style={styles.list}>
                     {behaviors.map((behavior, index) => (
                         <View style={styles.listComponent} key={index}>
-                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                            <View style={{ flexDirection: "row", alignItems: 'center', maxWidth: "76%" }}>
                                 <Text style={styles.parr}>{index + 1}. </Text>
                                 <Text style={styles.parr}>{behavior.name}</Text>
                             </View>

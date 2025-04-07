@@ -174,6 +174,7 @@ const Home = () =>{
                     {/* Bitacore List */}
                     <BrainWareBitacoreList challenges={challenges} />
                 </View>
+                <View style={{height:100}} />
             </ScrollView>
             <MainFooter />
         </SafeAreaView>
