@@ -100,7 +100,7 @@ const Register = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:9090/api/auth/register', { // Replace with your actual API URL
+            const response = await fetch('https://administracionalpha.com/api/auth/register', { // Replace with your actual API URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

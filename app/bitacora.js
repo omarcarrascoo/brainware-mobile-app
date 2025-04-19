@@ -34,7 +34,7 @@ const Bitacora = () => {
     useEffect(() => {
         const fetchChallenge = async () => {
             try {
-                const response = await axios.get(`http://localhost:9090/api/challenges/${localParams.id}`);
+                const response = await axios.get(`https://administracionalpha.com/api/challenges/${localParams.id}`);
                 setChallenge(response.data);
                 setLoading(false);
             } catch (error) {
@@ -61,13 +61,13 @@ const Bitacora = () => {
     }, [challenge, currentDate]);
 
     const handleStatusChange = async (index, id, newValue) => {
-        // if (currentDate !== new Date().toISOString().slice(0, 10)) return;
+        if (currentDate !== new Date().toISOString().slice(0, 10)) return;
 
         const updatedBehaviors = [...behaviors];
         updatedBehaviors[index].status = newValue;
         setBehaviors(updatedBehaviors);
 
-        await axios.post(`http://localhost:9090/api/challenges/${localParams.id}/progress`, {
+        await axios.post(`https://administracionalpha.com/api/challenges/${localParams.id}/progress`, {
             date: currentDate,
             completedRules: updatedBehaviors,
             status: newValue
@@ -77,11 +77,10 @@ const Bitacora = () => {
             console.error('Error updating progress:', error);
         });
 
-        if (newValue !== "NA") {
+        if (newValue == "FALLO") {
             router.push({ pathname: `/preguntas`, params: { id: id, ruleStatus: newValue, challengeData: challenge, challengeTitle: challenge.title, ciclo: challenge.ciclo } });
         }
     };
-
     const handleNavigate = () => {
         router.back('/home');
     };
@@ -105,15 +104,16 @@ const Bitacora = () => {
 
         if (newDateString > today) return;
         if (newDateString > endDateString) return;
-        if (newDateString < startDateString) return;
-
-        setCurrentDate(newDateString);
+        if (newDateString < startDateString) return; 
+       setCurrentDate(newDateString);
     };
 
     const isPrevDisabled = !challenge.startDate || currentDate <= new Date(challenge.startDate).toISOString().slice(0, 10);
     const isNextDisabled = !challenge.endDate || currentDate >= new Date(challenge.endDate).toISOString().slice(0, 10) || currentDate >= new Date().toISOString().slice(0, 10);
 
     const openModal = (index, value) => {
+
+        if (currentDate !== new Date().toISOString().slice(0, 10)) return;
         setSelectedIndex(index);
         setSelectedValue(value);
         setModalVisible(true);

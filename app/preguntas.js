@@ -35,7 +35,7 @@ const Preguntas = () => {
     };
     const handleSendData = async () => {
         try {
-            const response = await axios.post('http://localhost:9090/api/questions', {
+            const response = await axios.post('https://administracionalpha.com/api/questions', {
                 ruleId: localParams.id,
                 q1: text,
                 q2: text2,
