@@ -22,7 +22,7 @@ const DesafioCard = ({ allChallenge, title, description, progress, imageUrl, id,
     useEffect(() => {
         const fetchProgressCycle = async () => {
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/analisis/${id}/progress`);
+                const response = await axios.get(`http://localhost:9090/api/analisis/${id}/progress`);
                 const data = response?.data?.progressPercentage;
                 setProgressCycle(data);
             } catch (error) {

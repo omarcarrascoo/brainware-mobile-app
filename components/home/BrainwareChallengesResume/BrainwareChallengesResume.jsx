@@ -66,14 +66,14 @@ export default BrainWareChallengesResume;
 //     const fetchUserAndChallenges = async () => {
 //       try {
 //         // Fetch user data by filtering with the username (slug)
-//         const userResponse = await axios.get(`https://administracionalpha.com/api/user?username=${slug}`);
+//         const userResponse = await axios.get(`http://localhost:9090/api/user?username=${slug}`);
 //         // Assume the API returns an array of users; take the first one
 //         const userData = Array.isArray(userResponse.data) ? userResponse.data[0] : userResponse.data;
 //         setUser(userData);
 
 //         // Fetch challenges for that user using the user id
 //         if (userData && userData._id) {
-//           const challengesResponse = await axios.get(`https://administracionalpha.com/api/challenges?userId=${userData._id}`);
+//           const challengesResponse = await axios.get(`http://localhost:9090/api/challenges?userId=${userData._id}`);
 //           setChallenges(challengesResponse.data);
 //         }
 //       } catch (err) {

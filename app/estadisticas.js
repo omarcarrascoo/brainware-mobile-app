@@ -47,7 +47,7 @@ const Stats = () => {
     useEffect(() => {
         const fetchChallenges = async () => {
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/challenges`);
+                const response = await axios.get(`http://localhost:9090/api/challenges`);
                 const filteredChallenges = response.data.filter(challenge => challenge.userId === user);
 
                 // Group challenges by title and keep the most recent one
@@ -77,7 +77,7 @@ const Stats = () => {
         const fetchChallengeProgress = async () => {
             if (selectedChallenge) {
                 try {
-                    const response = await axios.get(`https://administracionalpha.com/api/analisis/challengeProgress?challengeId=${selectedChallenge.key}`);
+                    const response = await axios.get(`http://localhost:9090/api/analisis/challengeProgress?challengeId=${selectedChallenge.key}`);
                     setChallengeProgress(response.data);
                     console.log('Challenge Progress:', response.data);
                 } catch (error) {
@@ -93,7 +93,7 @@ const Stats = () => {
         const fetchRuleProgress = async () => {
             if (selectedChallenge) {
                 try {
-                    const response = await axios.get(`https://administracionalpha.com/api/analisis/ruleProgress?challengeId=${selectedChallenge.key}`);
+                    const response = await axios.get(`http://localhost:9090/api/analisis/ruleProgress?challengeId=${selectedChallenge.key}`);
                     const progressData = response.data;
 
                     // Transform the response data into the required format
@@ -119,7 +119,7 @@ const Stats = () => {
         const fetchCycleStats = async () => {
             if (selectedChallenge) {
                 try {
-                    const response = await axios.get(`https://administracionalpha.com/api/analisis/cycleStats?challengeId=${selectedChallenge.key}`);
+                    const response = await axios.get(`http://localhost:9090/api/analisis/cycleStats?challengeId=${selectedChallenge.key}`);
                     const statsData = response.data;
 
                     // Transform the response data into the required format

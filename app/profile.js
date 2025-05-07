@@ -39,7 +39,7 @@ const Home = () => {
             if (!user || !token) return;
 
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/user/find/${user}`, {
+                const response = await axios.get(`http://localhost:9090/api/user/find/${user}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

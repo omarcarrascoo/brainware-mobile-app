@@ -78,7 +78,7 @@ const CreateChallenge = () => {
 
                 if (idCycle) {
                     // Update existing challenge
-                    axios.put(`https://administracionalpha.com/api/challenges/${idCycle}`, data)
+                    axios.put(`http://localhost:9090/api/challenges/${idCycle}`, data)
                         .then(response => {
                             console.log(response.data);
                             Alert.alert(
@@ -97,7 +97,7 @@ const CreateChallenge = () => {
                         });
                 } else {
                     // Create new challenge
-                    axios.post('https://administracionalpha.com/api/challenges/create', data)
+                    axios.post('http://localhost:9090/api/challenges/create', data)
                         .then(response => {
                             console.log(response.data);
                             Alert.alert(

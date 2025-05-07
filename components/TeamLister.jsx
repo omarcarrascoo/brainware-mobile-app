@@ -15,7 +15,7 @@ function TeamLister() {
             try {
                const teamId = await AsyncStorage.getItem('teamId');
 
-                const response = await axios.get('https://administracionalpha.com/api/user');
+                const response = await axios.get('http://localhost:9090/api/user');
                 const filterEquipo = response.data.filter(user => user.companyCode == teamId)
                 setUsers(filterEquipo);
             } catch (error) {

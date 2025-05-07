@@ -34,7 +34,7 @@ const Bitacora = () => {
     useEffect(() => {
         const fetchChallenge = async () => {
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/challenges/${localParams.id}`);
+                const response = await axios.get(`http://localhost:9090/api/challenges/${localParams.id}`);
                 setChallenge(response.data);
                 setLoading(false);
             } catch (error) {
@@ -67,7 +67,7 @@ const Bitacora = () => {
         updatedBehaviors[index].status = newValue;
         setBehaviors(updatedBehaviors);
 
-        await axios.post(`https://administracionalpha.com/api/challenges/${localParams.id}/progress`, {
+        await axios.post(`http://localhost:9090/api/challenges/${localParams.id}/progress`, {
             date: currentDate,
             completedRules: updatedBehaviors,
             status: newValue
@@ -78,7 +78,7 @@ const Bitacora = () => {
         });
 
         if (newValue == "FALLO") {
-            router.push({ pathname: `/preguntas`, params: { id: id, ruleStatus: newValue, challengeData: challenge, challengeTitle: challenge.title, ciclo: challenge.ciclo } });
+            router.push({ pathname: `/preguntas`, params: { id: id, ruleStatus: newValue, challengeData: challenge, challengeTitle: challenge.title, ciclo: challenge.ciclo, date: new Date().toISOString().slice(0, 10) } });
         }
     };
     const handleNavigate = () => {

@@ -30,7 +30,7 @@ function TeamCard({userInfo, userId}) {
     useEffect(() => {
         const fetchChallenges = async () => {
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/challenges`);
+                const response = await axios.get(`http://localhost:9090/api/challenges`);
                 const filteredChallenges = response.data.filter(challenge => challenge.userId === userId);
                 setChallenges(filteredChallenges);
                 setLoading(false);

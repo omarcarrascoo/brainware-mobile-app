@@ -21,7 +21,7 @@ const Equipo = () =>{
     useEffect(() => {
         const fetchChallenges = async () => {
             try {
-                const response = await axios.get('https://administracionalpha.com/api/challenges');
+                const response = await axios.get('http://localhost:9090/api/challenges');
                 setChallenges(response.data);
                 setLoading(false);
             } catch (error) {

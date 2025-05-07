@@ -38,7 +38,7 @@ const Home = () =>{
     // useEffect(() => {
     //     const fetchChallenges = async () => {
     //         try {
-    //             const response = await axios.get(`https://administracionalpha.com/api/challenges`);
+    //             const response = await axios.get(`http://localhost:9090/api/challenges`);
     //             const filteredChallenges = response.data.filter(challenge => challenge.userId === user);
     //             setChallenges(filteredChallenges);
     //             setLoading(false);
@@ -55,7 +55,7 @@ const Home = () =>{
     useEffect(() => {
         const fetchChallenges = async () => {
             try {
-                const response = await axios.get(`https://administracionalpha.com/api/challenges`);
+                const response = await axios.get(`http://localhost:9090/api/challenges`);
                 const filteredChallenges = response.data.filter(challenge => challenge.userId === user);
 
                 // Group challenges by title and keep the most recent one

@@ -35,7 +35,8 @@ const Preguntas = () => {
     };
     const handleSendData = async () => {
         try {
-            const response = await axios.post('https://administracionalpha.com/api/questions', {
+            const response = await axios.post('http://localhost:9090/api/questions', {
+                ruleTitle: localParams.date,
                 ruleId: localParams.id,
                 q1: text,
                 q2: text2,
@@ -49,7 +50,6 @@ const Preguntas = () => {
 
         } catch (error) {
             console.log(error);
-            
             Alert.alert("An error occurred", error.message);
         }
     };
